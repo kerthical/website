@@ -1,0 +1,64 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const articles = await getCollection('articles');
+articles?.sort((a, b) => {
+  const aDate = new Date(a.data.createdAt);
+  const bDate = new Date(b.data.createdAt);
+  return bDate - aDate;
+});
+---
+
+<Layout title="kerthical.com">
+  <div class="flex flex-col items-center gap-16">
+    <div class="flex items-center gap-8 self-center">
+      <img class="h-24 w-24" src="/icon.png" alt="" />
+      <div class="flex flex-col">
+        <h1 class="text-xl font-bold">kerthical</h1>
+        <p>Security researcher</p>
+        <div class="flex gap-2">
+          <a
+            class="font-bold hover:underline"
+            href="https://twitter.com/kerthical"
+          >
+            Twitter
+          </a>
+          <a
+            class="font-bold hover:underline"
+            href="https://github.com/kerthical"
+          >
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col gap-1">
+      <h2 class="text-md font-bold">Articles</h2>
+      <div class="flex flex-col gap-1">
+        {
+          !articles ? (
+            <p>No articles yet.</p>
+          ) : (
+            articles.map(article => (
+              <a class="hover:underline" href={`/articles/${article.slug}`}>
+                <span>
+                  {new Date(article.data.createdAt).toLocaleDateString(
+                    'ja-JP',
+                    {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    },
+                  )}{' '}
+                  -
+                </span>
+                <span class="font-bold">{article.data.title}</span>
+              </a>
+            ))
+          )
+        }
+      </div>
+    </div>
+  </div>
+</Layout>

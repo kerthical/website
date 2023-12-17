@@ -1,0 +1,29 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title, description } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="canonical" href={canonicalURL} />
+    <title>{title}</title>
+    <meta name="title" content={title} />
+  </head>
+  <body class="p-8">
+    <slot />
+    <style>
+      html {
+        width: 100dvw;
+        max-width: 100dvw;
+        overflow-x: hidden;
+      }
+    </style>
+  </body>
+</html>

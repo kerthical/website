@@ -1,0 +1,95 @@
+{
+  "name": "website",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev --host",
+    "build": "astro build",
+    "format": "prettier --write .",
+    "lint": "eslint --fix .",
+    "prepare": "astro sync"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^8.0.0",
+    "@astrojs/tailwind": "^5.0.3",
+    "@tailwindcss/typography": "^0.5.10",
+    "astro": "^4.0.6",
+    "astro-compress": "^2.2.5",
+    "astro-critters": "^2.0.11",
+    "daisyui": "^4.4.20",
+    "tailwindcss": "^3.3.6",
+    "wrangler": "^3.21.0"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-astro": "^0.31.0",
+    "prettier": "^3.1.1",
+    "prettier-plugin-astro": "^0.12.2",
+    "prettier-plugin-tailwindcss": "^0.5.9"
+  },
+  "prettier": {
+    "plugins": [
+      "@trivago/prettier-plugin-sort-imports",
+      "prettier-plugin-astro",
+      "prettier-plugin-tailwindcss"
+    ],
+    "trailingComma": "all",
+    "singleQuote": true,
+    "semi": true,
+    "endOfLine": "lf",
+    "arrowParens": "avoid",
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "overrides": [
+      {
+        "files": "*.astro",
+        "options": {
+          "parser": "astro"
+        }
+      }
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "extends": [
+      "plugin:astro/recommended",
+      "prettier"
+    ],
+    "plugins": [
+      "astro"
+    ],
+    "ignorePatterns": [
+      "dist/*"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.astro"
+        ],
+        "parser": "astro-eslint-parser",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser",
+          "extraFileExtensions": [
+            ".astro"
+          ]
+        }
+      },
+      {
+        "files": [
+          "*.ts"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+          "project": "./tsconfig.json"
+        }
+      }
+    ]
+  }
+}
