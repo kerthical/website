@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "migrate": "drizzle-kit generate:sqlite --schema src/db/schema.ts --out migrations",
     "format": "prettier --write .",
     "lint": "eslint --fix .",
     "prepare": "astro sync"
@@ -18,6 +19,7 @@
     "astro": "^4.0.6",
     "astro-compress": "^2.2.5",
     "astro-critters": "^2.0.11",
+    "astro-icon": "^0.8.2",
     "better-sqlite3": "^9.2.2",
     "daisyui": "^4.4.20",
     "drizzle-orm": "^0.29.1",
@@ -63,11 +65,11 @@
     "env": {
       "browser": true,
       "node": true,
-      "es6": true,
-      "commonjs": true
+      "es6": true
     },
     "parserOptions": {
-      "sourceType": "module"
+      "sourceType": "module",
+      "ecmaVersion": "latest"
     },
     "extends": [
       "plugin:astro/recommended",

@@ -4,6 +4,7 @@ import { drizzle } from 'drizzle-orm/d1';
 import { articles } from '@db/schema';
 import { eq } from 'drizzle-orm';
 import { marked } from 'marked';
+import { Icon } from 'astro-icon'
 
 const db = drizzle(Astro.locals.runtime.env['D1']);
 const result = (
@@ -14,13 +15,19 @@ const result = (
     .limit(1)
 )[0];
 if (!result) {
-  Astro.redirect('/404');
+  return Astro.redirect('/404');
 }
 const content = marked.parse(result.content);
 ---
 
 <Layout title={`kerthical.com | ${result.title}`}>
-  <div class="flex flex-col items-center p-8">
-    <div class="prose max-w-3xl max-sm:max-w-full" set:html={content} />
+  <div class="flex flex-col items-center p-16">
+    <div class="flex flex-col gap-8 w-full max-w-3xl max-sm:max-w-full">
+      <a href="/" class="flex items-center hover:underline">
+        <Icon name="mdi:chevron-left" class="inline-block w-4 h-4" />
+        Back
+      </a>
+      <div class="prose" set:html={content} />
+    </div>
   </div>
 </Layout>
