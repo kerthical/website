@@ -2,7 +2,7 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 import compress from 'astro-compress';
 import critters from 'astro-critters';
-import { defineConfig, passthroughImageService } from 'astro/config';
+import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   site: 'https://kerthical.com',
