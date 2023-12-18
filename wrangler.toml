@@ -1,0 +1,7 @@
+name = "website"
+compatibility_date = "2023-12-18"
+
+[[d1_databases]]
+binding = "D1"
+database_name = "website"
+database_id = "ac5572ad-e87b-46f5-b5c8-2587e9194d56"

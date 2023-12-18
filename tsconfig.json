@@ -2,12 +2,11 @@
   "extends": "astro/tsconfigs/strictest",
   "compilerOptions": {
     "baseUrl": "src",
+    "types": ["@cloudflare/workers-types"],
     "paths": {
-      "@content/*": ["content/*"],
-      "@components/*": ["components/*"],
-      "@pages/*": ["pages/*"],
       "@layouts/*": ["layouts/*"],
-      "@styles/*": ["styles/*"]
+      "@db/*": ["db/*"]
     }
-  }
+  },
+  "include": ["src"]
 }

@@ -1,17 +1,26 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
+import { drizzle } from 'drizzle-orm/d1';
+import { articles } from '@db/schema';
+import { eq } from 'drizzle-orm';
+import { marked } from 'marked';
 
-const article = (await getCollection('articles'))?.find(
-  article => article.slug === Astro.params['slug'],
-);
-const { Content } = await article.render();
+const db = drizzle(Astro.locals.runtime.env['D1']);
+const result = (
+  await db
+    .select()
+    .from(articles)
+    .where(eq(articles.slug, Astro.params['slug']))
+    .limit(1)
+)[0];
+if (!result) {
+  Astro.redirect('/404');
+}
+const content = marked.parse(result.content);
 ---
 
-<Layout title={`kerthical.com | ${article.data.title}`}>
-  <div class="flex flex-col items-center">
-    <div class="prose max-w-3xl max-sm:max-w-full">
-      <Content />
-    </div>
+<Layout title={`kerthical.com | ${result.title}`}>
+  <div class="flex flex-col items-center p-8">
+    <div class="prose max-w-3xl max-sm:max-w-full" set:html={content} />
   </div>
 </Layout>
