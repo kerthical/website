@@ -1,12 +1,22 @@
 {
   "extends": "astro/tsconfigs/strictest",
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": [
+      "@cloudflare/workers-types"
+    ],
     "baseUrl": "src",
-    "types": ["@cloudflare/workers-types"],
     "paths": {
-      "@layouts/*": ["layouts/*"],
-      "@db/*": ["db/*"]
+      "@layouts/*": [
+        "layouts/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ]
     }
-  },
-  "include": ["src"]
+  }
 }

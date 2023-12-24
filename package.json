@@ -5,103 +5,45 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "migrate": "drizzle-kit generate:sqlite --schema src/db/schema.ts --out migrations",
-    "format": "prettier --write .",
-    "lint": "eslint --fix .",
+    "migrate:local": "drizzle-kit push:sqlite --schema src/lib/schema.ts --driver better-sqlite --url .astro/d1/miniflare-D1DatabaseObject/*.sqlite",
+    "migrate:remote": "drizzle-kit generate:sqlite --schema src/lib/schema.ts --out migrations && wrangler d1 migrations apply website",
     "prepare": "astro sync"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^8.0.0",
+    "@astrojs/react": "^3.0.7",
     "@astrojs/tailwind": "^5.0.3",
-    "@cloudflare/workers-types": "^4.20231121.0",
+    "@lucia-auth/adapter-sqlite": "^2.0.1",
     "@tailwindcss/typography": "^0.5.10",
-    "@types/better-sqlite3": "^7.6.8",
     "astro": "^4.0.6",
     "astro-compress": "^2.2.5",
     "astro-critters": "^2.0.11",
     "better-sqlite3": "^9.2.2",
     "daisyui": "^4.4.20",
     "drizzle-orm": "^0.29.1",
+    "lucia": "^2.7.6",
     "marked": "^11.1.0",
-    "tailwindcss": "^3.3.6",
-    "wrangler": "^3.21.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.6"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231121.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "drizzle-kit": "^0.20.6",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-astro": "^0.31.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.1.1",
     "prettier-plugin-astro": "^0.12.2",
-    "prettier-plugin-tailwindcss": "^0.5.9"
-  },
-  "prettier": {
-    "plugins": [
-      "@trivago/prettier-plugin-sort-imports",
-      "prettier-plugin-astro",
-      "prettier-plugin-tailwindcss"
-    ],
-    "trailingComma": "all",
-    "singleQuote": true,
-    "semi": true,
-    "endOfLine": "lf",
-    "arrowParens": "avoid",
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true,
-    "overrides": [
-      {
-        "files": "*.astro",
-        "options": {
-          "parser": "astro"
-        }
-      }
-    ]
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "node": true,
-      "es6": true
-    },
-    "parserOptions": {
-      "sourceType": "module",
-      "ecmaVersion": "latest"
-    },
-    "extends": [
-      "plugin:astro/recommended",
-      "prettier"
-    ],
-    "plugins": [
-      "astro"
-    ],
-    "ignorePatterns": [
-      "dist/*"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "*.astro"
-        ],
-        "parser": "astro-eslint-parser",
-        "parserOptions": {
-          "parser": "@typescript-eslint/parser",
-          "extraFileExtensions": [
-            ".astro"
-          ]
-        }
-      },
-      {
-        "files": [
-          "*.ts"
-        ],
-        "parser": "@typescript-eslint/parser",
-        "parserOptions": {
-          "project": "./tsconfig.json"
-        }
-      }
-    ]
+    "prettier-plugin-tailwindcss": "^0.5.9",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.22.1"
   }
 }

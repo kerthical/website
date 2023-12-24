@@ -1,34 +1,24 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { drizzle } from 'drizzle-orm/d1';
-import { articles } from '@db/schema';
+import { articles } from '@lib/schema';
 import { eq } from 'drizzle-orm';
-import { marked } from 'marked';
+import Article from '@components/Article';
+import { getDB } from '../../lib/auth';
 
-const db = drizzle(Astro.locals.runtime.env['D1']);
-const result = (
-  await db
-    .select()
-    .from(articles)
-    .where(eq(articles.slug, Astro.params['slug']))
-    .limit(1)
-)[0];
+const slug = Astro.params['slug'];
+if (!slug) {
+  return Astro.redirect('/');
+}
+const { db } = getDB(Astro.locals.runtime.env['D1']);
+const result = (await db.select().from(articles).where(eq(articles.slug, slug)).limit(1))[0];
+
 if (!result) {
   return Astro.redirect('/404');
 }
-const content = marked.parse(result.content);
+
+const session = await Astro.locals.auth.validate();
 ---
 
 <Layout title={`kerthical.com | ${result.title}`}>
-  <div class="flex flex-col items-center p-8">
-    <div class="flex flex-col gap-8 w-full max-w-3xl max-sm:max-w-full">
-      <a href="/" class="flex items-center hover:underline">
-        <svg class="inline-block w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
-          <path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z" />
-        </svg>
-        Back
-      </a>
-      <div class="prose max-w-full" set:html={content} />
-    </div>
-  </div>
+  <Article client:load result={result} isAuthenticated={session !== null} />
 </Layout>
