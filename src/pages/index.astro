@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { drizzle } from 'drizzle-orm/d1';
-import { articles } from '@db/schema';
+import { articles } from '../schema';
 
 const db = drizzle(Astro.locals.runtime.env['D1']);
 const result = await db.select().from(articles).all();
@@ -17,13 +17,13 @@ const result = await db.select().from(articles).all();
           <p>Security researcher</p>
           <div class="flex gap-2">
             <a
-              class="font-bold hover:underline"
+              class="font-bold link link-hover"
               href="https://twitter.com/kerthical"
             >
               Twitter
             </a>
             <a
-              class="font-bold hover:underline"
+              class="font-bold link link-hover"
               href="https://github.com/kerthical"
             >
               GitHub
@@ -39,7 +39,7 @@ const result = await db.select().from(articles).all();
               <p>No articles yet.</p>
             ) : (
               result.map(article => (
-                <a class="hover:underline" href={`/articles/${article.slug}`}>
+                <a class="link link-hover" href={`/articles/${article.slug}`}>
                   <span>
                     {new Date(article.created_at as string).toLocaleDateString(
                       'ja-JP',
