@@ -9,6 +9,7 @@
   "semi": true,
   "endOfLine": "lf",
   "arrowParens": "avoid",
+  "printWidth": 120,
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "overrides": [

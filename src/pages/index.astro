@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { drizzle } from 'drizzle-orm/d1';
-import { articles } from '../schema';
+import { articles } from '@lib/schema';
 
 const db = drizzle(Astro.locals.runtime.env['D1']);
 const result = await db.select().from(articles).all();
@@ -16,39 +16,26 @@ const result = await db.select().from(articles).all();
           <h1 class="text-xl font-bold">kerthical</h1>
           <p>Security researcher</p>
           <div class="flex gap-2">
-            <a
-              class="font-bold link link-hover"
-              href="https://twitter.com/kerthical"
-            >
-              Twitter
-            </a>
-            <a
-              class="font-bold link link-hover"
-              href="https://github.com/kerthical"
-            >
-              GitHub
-            </a>
+            <a class="link-hover link font-bold" href="https://twitter.com/kerthical"> Twitter</a>
+            <a class="link-hover link font-bold" href="https://github.com/kerthical"> GitHub</a>
           </div>
         </div>
       </div>
       <div class="flex flex-col gap-1">
         <h2 class="text-md font-bold">Articles</h2>
-        <div class="flex flex-col gap-1 max-w-3xl">
+        <div class="flex max-w-3xl flex-col gap-1">
           {
             !articles ? (
               <p>No articles yet.</p>
             ) : (
               result.map(article => (
-                <a class="link link-hover" href={`/articles/${article.slug}`}>
+                <a class="link-hover link" href={`/articles/${article.slug}`}>
                   <span>
-                    {new Date(article.created_at as string).toLocaleDateString(
-                      'ja-JP',
-                      {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                      },
-                    )}
+                    {new Date(article.created_at as string).toLocaleDateString('ja-JP', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    })}
                   </span>
                   <span>-</span>
                   <span class="font-bold">{article.title}</span>

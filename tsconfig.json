@@ -1,18 +1,22 @@
 {
   "extends": "astro/tsconfigs/strictest",
   "compilerOptions": {
-    "baseUrl": "/Users/kerthical/Code/website/src",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "types": [
       "@cloudflare/workers-types"
     ],
+    "baseUrl": "src",
     "paths": {
-      "@layouts/*": ["layouts/*"],
-      "@components/*": ["components/*"],
-    },
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  },
-  "include": [
-    "src"
-  ]
+      "@layouts/*": [
+        "layouts/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ]
+    }
+  }
 }

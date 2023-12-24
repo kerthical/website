@@ -1,29 +1,24 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { drizzle } from 'drizzle-orm/d1';
-import { articles } from '../../schema';
+import { articles } from '@lib/schema';
 import { eq } from 'drizzle-orm';
 import Article from '@components/Article';
+import { getDB } from '../../lib/auth';
 
 const slug = Astro.params['slug'];
 if (!slug) {
   return Astro.redirect('/');
 }
-const db = drizzle(Astro.locals.runtime.env['D1']);
-
-const result = (
-  await db
-    .select()
-    .from(articles)
-    .where(eq(articles.slug, slug))
-    .limit(1)
-)[0];
+const { db } = getDB(Astro.locals.runtime.env['D1']);
+const result = (await db.select().from(articles).where(eq(articles.slug, slug)).limit(1))[0];
 
 if (!result) {
   return Astro.redirect('/404');
 }
+
+const session = await Astro.locals.auth.validate();
 ---
 
 <Layout title={`kerthical.com | ${result.title}`}>
-  <Article client:load result={result} />
+  <Article client:load result={result} isAuthenticated={session !== null} />
 </Layout>
