@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/d1';
 import { lucia } from 'lucia';
 import { astro } from 'lucia/middleware';
 
-export const getDB = (d1env: import('@cloudflare/workers-types').D1Database) => {
+export const getDB = (d1env: D1Database) => {
   const db = drizzle(d1env);
   const auth = lucia({
     adapter: d1(d1env, {
@@ -13,11 +13,6 @@ export const getDB = (d1env: import('@cloudflare/workers-types').D1Database) => 
     }),
     env: import.meta.env.DEV ? 'DEV' : 'PROD',
     middleware: astro(),
-    getUserAttributes: data => {
-      return {
-        username: data.username,
-      };
-    },
   });
 
   return { db, auth };

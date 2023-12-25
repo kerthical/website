@@ -1,7 +1,6 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import { getDB } from '@lib/auth';
-import { Auth, Key, LuciaError, Session } from 'lucia';
+import Layout from '@/components/Layout.astro';
+import { Key, LuciaError, Session } from 'lucia';
 
 let errorMessage: string | null = null;
 
@@ -12,14 +11,13 @@ if (Astro.request.method === 'POST') {
 
   if (!(typeof username !== 'string' || typeof password !== 'string')) {
     try {
-      const { auth }: { auth: Auth } = getDB(Astro.locals.runtime.env['D1']);
-      const key: Key = await auth.useKey('username', username, password);
-      const session: Session = await auth.createSession({
+      const key: Key = await Astro.locals.auth.useKey('username', username, password);
+      const session: Session = await Astro.locals.auth.createSession({
         userId: key.userId,
         attributes: {},
       });
-      Astro.locals.auth.setSession(session);
-      return Astro.redirect('/', 302);
+      Astro.locals.authRequest.setSession(session);
+      return Astro.redirect('/');
     } catch (e) {
       if (e instanceof LuciaError && (e.message === 'AUTH_INVALID_KEY_ID' || e.message === 'AUTH_INVALID_PASSWORD')) {
         errorMessage = 'Incorrect username or password';
@@ -39,19 +37,17 @@ if (Astro.request.method === 'POST') {
 
 <Layout title="kerthical.com">
   <div class="flex h-screen max-h-screen min-h-screen flex-col items-center justify-center overflow-hidden">
-    <div class="flex flex-col items-center justify-center">
-      <form method="post">
-        <label>
-          Username
-          <input type="text" name="username" required />
-        </label>
-        <label>
-          Password
-          <input type="password" name="password" required />
-        </label>
-        <button type="submit">Login</button>
-      </form>
-      <p class="error">{errorMessage}</p>
-    </div>
+    <form method="post" class="flex w-1/5 flex-col items-center justify-center gap-4">
+      <label class="form-control w-full">
+        Username
+        <input type="text" name="username" class="input input-bordered" required />
+      </label>
+      <label class="form-control w-full">
+        Password
+        <input type="password" name="password" class="input input-bordered" required />
+      </label>
+      <button type="submit" class="btn btn-primary w-full">Login</button>
+    </form>
+    <p class="text-red-400">{errorMessage}</p>
   </div>
 </Layout>

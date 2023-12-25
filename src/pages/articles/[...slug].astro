@@ -1,24 +1,157 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import { articles } from '@lib/schema';
+import Layout from '@/components/Layout.astro';
+import { articles } from '@/schema';
 import { eq } from 'drizzle-orm';
-import Article from '@components/Article';
-import { getDB } from '../../lib/auth';
+import { marked } from 'marked';
 
 const slug = Astro.params['slug'];
 if (!slug) {
   return Astro.redirect('/');
 }
-const { db } = getDB(Astro.locals.runtime.env['D1']);
+const db = Astro.locals.db;
 const result = (await db.select().from(articles).where(eq(articles.slug, slug)).limit(1))[0];
 
 if (!result) {
   return Astro.redirect('/404');
 }
 
-const session = await Astro.locals.auth.validate();
+const session = await Astro.locals.authRequest.validate();
+const content = marked.parse(result.content);
 ---
 
 <Layout title={`kerthical.com | ${result.title}`}>
-  <Article client:load result={result} isAuthenticated={session !== null} />
+  <div class="flex flex-col items-center p-8">
+    <div class="flex w-full max-w-3xl flex-col gap-8 max-sm:max-w-full">
+      <div class="flex w-full items-center justify-between" id="header">
+        <a href="/" class="link-hover link flex items-center">
+          <svg class="inline-block h-4 w-4" viewBox="0 0 22 22">
+            <path fill="currentColor" d="M15.41 16.58L10.83 12l4.58-4.59L14 6l-6 6l6 6z"></path>
+          </svg>
+           Back
+        </a>
+        {
+          session && (
+            <div class="flex items-center gap-2" id="btn-container">
+              <a class="link-hover link flex items-center " id="btn-edit">
+                Edit
+              </a>
+            </div>
+          )
+        }
+      </div>
+      <div class="prose max-w-full h-full" id="container-content" data-title={result.title} data-content={result.content}>
+        <h1 set:text={result.title} />
+        <div set:html={content} />
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    function replaceContentContainer(titleText, contentHTML) {
+      const contentContainer = document.getElementById('container-content');
+      const title = document.createElement('h1');
+      title.id = 'title';
+      title.classList.add('text-2xl', 'font-bold', 'w-full', 'mb-4');
+      title.innerText = titleText;
+
+      const content = document.createElement('div');
+      content.id = 'content';
+      content.classList.add('w-full', 'mb-4');
+      content.innerHTML = contentHTML;
+
+      while (contentContainer.firstChild) {
+        contentContainer.removeChild(contentContainer.firstChild);
+      }
+
+      contentContainer.appendChild(title);
+      contentContainer.appendChild(content);
+    }
+
+    document.addEventListener('click', e => {
+      const btnContainer = document.getElementById('btn-container');
+      const contentContainer = document.getElementById('container-content');
+
+      if (e.target.id === 'btn-edit') {
+        e.target.remove();
+
+        const btnSave = document.createElement('a');
+        btnSave.id = 'btn-save';
+        btnSave.classList.add('link-hover', 'link', 'flex', 'items-center');
+        btnSave.innerText = 'Save';
+
+        const btnCancel = document.createElement('a');
+        btnCancel.id = 'btn-cancel';
+        btnCancel.classList.add('link-hover', 'link', 'flex', 'items-center');
+        btnCancel.innerText = 'Cancel';
+
+        btnContainer.appendChild(btnSave);
+        btnContainer.appendChild(btnCancel);
+
+        const title = document.createElement('input');
+        title.id = 'title';
+        title.classList.add('text-2xl', 'font-bold', 'w-full', 'input', 'input-bordered', 'mb-4');
+        title.value = contentContainer.dataset.title;
+
+        const content = document.createElement('textarea');
+        content.id = 'content';
+        content.classList.add('w-full', 'mb-4', 'textarea', 'textarea-bordered', 'h-96');
+        content.value = contentContainer.dataset.content;
+
+        while (contentContainer.firstChild) {
+          contentContainer.removeChild(contentContainer.firstChild);
+        }
+
+        contentContainer.appendChild(title);
+        contentContainer.appendChild(content);
+      } else if (e.target.id === 'btn-cancel') {
+        e.target.remove();
+        document.getElementById('btn-save').remove();
+
+        const btnEdit = document.createElement('a');
+        btnEdit.id = 'btn-edit';
+        btnEdit.classList.add('link-hover', 'link', 'flex', 'items-center');
+        btnEdit.innerText = 'Edit';
+
+        btnContainer.appendChild(btnEdit);
+
+        replaceContentContainer(contentContainer.dataset.title, contentContainer.dataset.content);
+      } else if (e.target.id === 'btn-save') {
+        const title = document.getElementById('title');
+        const content = document.getElementById('content');
+
+        fetch(`/api/articles/${document.location.pathname.split('/')[2]}`, {
+          credentials: 'include',
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: title.value,
+            content: content.value,
+          }),
+        })
+          .then(async res => {
+            if (!res.ok) {
+              throw new Error('Failed to update article');
+            }
+
+            contentContainer.dataset.title = title.value;
+            contentContainer.dataset.content = content.value;
+
+            const json = await res.json();
+            replaceContentContainer(json.title, json.content);
+          })
+          .finally(() => {
+            e.target.remove();
+            document.getElementById('btn-cancel').remove();
+
+            const btnEdit = document.createElement('a');
+            btnEdit.id = 'btn-edit';
+            btnEdit.classList.add('link-hover', 'link', 'flex', 'items-center');
+            btnEdit.innerText = 'Edit';
+
+            btnContainer.appendChild(btnEdit);
+          });
+      }
+    });
+  </script>
 </Layout>

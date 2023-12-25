@@ -1,9 +1,5 @@
 {
-  "plugins": [
-    "@trivago/prettier-plugin-sort-imports",
-    "prettier-plugin-astro",
-    "prettier-plugin-tailwindcss"
-  ],
+  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-astro", "prettier-plugin-tailwindcss"],
   "trailingComma": "all",
   "singleQuote": true,
   "semi": true,

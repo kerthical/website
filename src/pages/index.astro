@@ -1,10 +1,8 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import { drizzle } from 'drizzle-orm/d1';
-import { articles } from '@lib/schema';
+import Layout from '@/components/Layout.astro';
+import { articles } from '@/schema';
 
-const db = drizzle(Astro.locals.runtime.env['D1']);
-const result = await db.select().from(articles).all();
+const result = await Astro.locals.db.select().from(articles).all();
 ---
 
 <Layout title="kerthical.com">

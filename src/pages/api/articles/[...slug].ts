@@ -1,15 +1,14 @@
-import { getDB } from '@lib/auth.ts';
-import { articles } from '@lib/schema';
+import { articles } from '@/schema';
 import type { APIRoute } from 'astro';
 import { eq } from 'drizzle-orm';
+import { marked } from 'marked';
+
 
 export const PUT: APIRoute = async context => {
   const { slug } = context.params;
   const { title, content }: { title: string; content: string } = await context.request.json();
-  const { db, auth } = await getDB(context.locals.runtime.env.D1);
-
-  const authRequest = auth.handleRequest(context);
-  const session = await authRequest.validate();
+  const db = context.locals.db;
+  const session = await context.locals.authRequest.validate();
 
   if (!session) {
     return new Response('Unauthorized', { status: 401 });
@@ -27,7 +26,11 @@ export const PUT: APIRoute = async context => {
     }
 
     await db.update(articles).set({ content, title }).where(eq(articles.slug, slug));
-    return new Response('OK', { status: 200 });
+    return new Response(JSON.stringify({
+      slug,
+      title,
+      content: marked.parse(content),
+    }), { status: 200 });
   } catch (e) {
     return new Response('Internal server error', { status: 500 });
   }

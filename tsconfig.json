@@ -3,20 +3,10 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "types": [
-      "@cloudflare/workers-types"
-    ],
+    "types": ["@cloudflare/workers-types"],
     "baseUrl": "src",
     "paths": {
-      "@layouts/*": [
-        "layouts/*"
-      ],
-      "@lib/*": [
-        "lib/*"
-      ],
-      "@components/*": [
-        "components/*"
-      ]
+      "@/*": ["*"]
     }
   }
 }
